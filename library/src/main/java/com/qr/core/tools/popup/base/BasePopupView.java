@@ -1,4 +1,4 @@
-package com.qr.core.tools.popup;
+package com.qr.core.tools.popup.base;
 
 import android.app.Activity;
 import android.content.Context;

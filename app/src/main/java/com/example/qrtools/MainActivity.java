@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.qr.core.tools.adapter.recyclerview.RecyclerViewAdapter;
 import com.qr.core.tools.adapter.recyclerview.RecyclerViewModel;
 import com.qr.core.tools.adapter.recyclerview.RecyclerViewViewHolder;
+import com.qr.core.tools.popup.impl.ConfirmPopupView;
 
 import java.util.List;
 
@@ -21,10 +22,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this,4));
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter();
-        recyclerView.setAdapter(adapter);
+        View viewById = findViewById(R.id.btn);
+        viewById.setOnClickListener(v -> {
+            new ConfirmPopupView.Builder(this)
+                    .title("title")
+                    .content("content")
+                    .cancel(()->{
+                        Toast.makeText(this, "cancel", Toast.LENGTH_SHORT).show();
+                    })
+                    .confirm(()->{
+                        Toast.makeText(this, "confirm", Toast.LENGTH_SHORT).show();
+                    })
+                    .build()
+                    .show();
+        });
     }
+
 }
