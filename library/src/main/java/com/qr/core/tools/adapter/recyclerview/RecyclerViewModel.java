@@ -12,4 +12,7 @@ public abstract class RecyclerViewModel<T> {
     public abstract int spinSize();
     public abstract int layoutId();
     public abstract void bindView(RecyclerViewViewHolder holder, int position, List<Object> payloads);
+    public T getData() {
+        return data;
+    }
 }
