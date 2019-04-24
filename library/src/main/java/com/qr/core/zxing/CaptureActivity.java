@@ -42,8 +42,9 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.qr.core.R;
-import com.qr.core.zxing.scaner.CameraManager;
-import com.qr.core.zxing.scaner.PlanarYUVLuminanceSource;
+import com.qr.core.zxing.scaner.camera.CameraManager;
+import com.qr.core.zxing.scaner.decode.DecodeManager;
+import com.qr.core.zxing.scaner.decode.PlanarYUVLuminanceSource;
 import com.qr.core.zxing.scaner.decoding.InactivityTimer;
 
 import java.io.IOException;
@@ -107,7 +108,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         initDecode();
         initView();
         //扫描动画初始化
-        initScanerAnimation();
+        initScannerAnimation();
         //初始化 CameraManager
         CameraManager.init(this);
         hasSurface = false;
@@ -168,7 +169,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 // 使用ContentProvider通过URI获取原始图片
                 Bitmap photo = MediaStore.Images.Media.getBitmap(resolver, originalUri);
                 // 开始对图像资源解码
-                Result rawResult = RxQrBarTool.decodeFromPhoto(photo);
+                Result rawResult = DecodeManager.decodeFromPhoto(photo);
                 if (rawResult != null) {
                     Intent intent = new Intent();
                     intent.putExtra(SCAN_RESULT,rawResult.getText());
@@ -244,7 +245,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
 
         multiFormatReader.setHints(hints);
     }
-    private void initScanerAnimation() {
+    private void initScannerAnimation() {
         ImageView mQrLineView = findViewById(R.id.capture_scan_line);
         ScaleAnimation animation = new ScaleAnimation(1.0f, 1.0f, 0.0f, 1.0f);
         animation.setRepeatCount(-1);
