@@ -1,2 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.qr.core.tools" />
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.qr.core" >
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.HARDWARE_TEST" tools:ignore="ProtectedPermissions" />
+
+    <application>
+        <activity android:name=".zxing.CaptureActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+    </application>
+</manifest>

@@ -1,19 +1,13 @@
 package com.example.qrtools;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
-import com.qr.core.tools.adapter.recyclerview.RecyclerViewAdapter;
-import com.qr.core.tools.adapter.recyclerview.RecyclerViewModel;
-import com.qr.core.tools.adapter.recyclerview.RecyclerViewViewHolder;
-import com.qr.core.tools.popup.impl.ConfirmPopupView;
+import com.qr.core.zxing.CaptureActivity;
 
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,17 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
         View viewById = findViewById(R.id.btn);
         viewById.setOnClickListener(v -> {
-            new ConfirmPopupView.Builder(this)
-                    .title("title")
-                    .content("content")
-                    .cancel(()->{
-                        Toast.makeText(this, "cancel", Toast.LENGTH_SHORT).show();
-                    })
-                    .confirm(()->{
-                        Toast.makeText(this, "confirm", Toast.LENGTH_SHORT).show();
-                    })
-                    .build()
-                    .show();
+            Intent intent = new Intent(this, CaptureActivity.class);
+            startActivity(intent);
         });
     }
 
