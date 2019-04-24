@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.qr.core.zxing.scaner;
+package com.qr.core.zxing.scaner.camera;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
@@ -24,6 +24,8 @@ import android.hardware.Camera;
 import android.os.Build;
 import android.os.Handler;
 import android.view.SurfaceHolder;
+
+import com.qr.core.zxing.scaner.decode.PlanarYUVLuminanceSource;
 
 import java.io.IOException;
 
@@ -66,7 +68,6 @@ public final class CameraManager {
      */
     private final AutoFocusCallback autoFocusCallback;
     private Camera camera;
-    private Rect framingRect;
     private Rect framingRectInPreview;
     private boolean initialized;
     private boolean previewing;
@@ -210,7 +211,6 @@ public final class CameraManager {
     public Rect getFramingRect() {
         try {
             Point screenResolution = configManager.getScreenResolution();
-            // if (framingRect == null) {
             if (camera == null) {
                 return null;
             }
@@ -223,9 +223,7 @@ public final class CameraManager {
             } else {
                 topOffset = (screenResolution.y - FRAME_HEIGHT) / 2;
             }
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + FRAME_WIDTH, topOffset + FRAME_HEIGHT);
-            // }
-            return framingRect;
+            return new Rect(leftOffset, topOffset, leftOffset + FRAME_WIDTH, topOffset + FRAME_HEIGHT);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

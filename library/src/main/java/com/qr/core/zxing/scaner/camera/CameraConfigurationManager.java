@@ -1,4 +1,4 @@
-package com.qr.core.zxing.scaner;
+package com.qr.core.zxing.scaner.camera;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * @author vondear
  */
-final class CameraConfigurationManager {
+public final class CameraConfigurationManager {
 
     private static final String TAG = CameraConfigurationManager.class.getSimpleName();
 

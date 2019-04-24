@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.qr.core.zxing.scaner;
+package com.qr.core.zxing.scaner.camera;
 
 import android.hardware.Camera;
 import android.os.Handler;

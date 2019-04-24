@@ -1,4 +1,4 @@
-package com.qr.core.zxing.scaner;
+package com.qr.core.zxing.scaner.camera;
 
 import android.graphics.Point;
 import android.hardware.Camera;

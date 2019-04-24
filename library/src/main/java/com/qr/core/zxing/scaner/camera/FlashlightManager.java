@@ -1,4 +1,4 @@
-package com.qr.core.zxing.scaner;
+package com.qr.core.zxing.scaner.camera;
 
 import android.os.IBinder;
 import android.util.Log;
@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 /**
  * @author Vondear
  */
-final class FlashlightManager {
+public final class FlashlightManager {
 
     private static final String TAG = FlashlightManager.class.getSimpleName();
 

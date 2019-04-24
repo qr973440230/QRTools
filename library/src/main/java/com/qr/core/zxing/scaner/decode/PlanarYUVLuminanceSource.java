@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.qr.core.zxing.scaner;
+package com.qr.core.zxing.scaner.decode;
 
 import android.graphics.Bitmap;
 
@@ -87,10 +87,9 @@ public final class PlanarYUVLuminanceSource extends LuminanceSource {
         }
 
         // Otherwise copy one cropped row at a time.
-        byte[] yuv = yuvData;
         for (int y = 0; y < height; y++) {
             int outputOffset = y * width;
-            System.arraycopy(yuv, inputOffset, matrix, outputOffset, width);
+            System.arraycopy(yuvData, inputOffset, matrix, outputOffset, width);
             inputOffset += dataWidth;
         }
         return matrix;
@@ -113,13 +112,12 @@ public final class PlanarYUVLuminanceSource extends LuminanceSource {
         int width = getWidth();
         int height = getHeight();
         int[] pixels = new int[width * height];
-        byte[] yuv = yuvData;
         int inputOffset = top * dataWidth + left;
 
         for (int y = 0; y < height; y++) {
             int outputOffset = y * width;
             for (int x = 0; x < width; x++) {
-                int grey = yuv[inputOffset + x] & 0xff;
+                int grey = yuvData[inputOffset + x] & 0xff;
                 pixels[outputOffset + x] = 0xFF000000 | (grey * 0x00010101);
             }
             inputOffset += dataWidth;
