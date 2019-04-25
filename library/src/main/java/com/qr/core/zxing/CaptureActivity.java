@@ -1,7 +1,6 @@
 package com.qr.core.zxing;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -10,13 +9,11 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -43,15 +40,25 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.qr.core.R;
 import com.qr.core.zxing.scaner.camera.CameraManager;
-import com.qr.core.zxing.scaner.decode.DecodeManager;
+import com.qr.core.zxing.scaner.decode.DecodeImage;
 import com.qr.core.zxing.scaner.decode.PlanarYUVLuminanceSource;
 import com.qr.core.zxing.scaner.decoding.InactivityTimer;
 
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author vondear
@@ -63,29 +70,17 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     public static final int VIBRATE_DURATION = 200;
     public static final String SCAN_RESULT = CaptureActivity.class.getName() + "_DATA";
 
-    private MediaPlayer mediaPlayer;
+
+    private CameraManager cameraManager;
+    private Disposable autoFocusDisposable;
+    private Disposable previewDisposable;
+
     private InactivityTimer inactivityTimer;
-    /**
-     * 扫描处理
-     */
-    private CaptureActivityHandler handler;
-    /**
-     * 整体根布局
-     */
+
     private RelativeLayout mContainer = null;
-    /**
-     * 扫描框根布局
-     */
     private RelativeLayout mCropLayout = null;
-    /**
-     * 是否有预览
-     */
     private boolean hasSurface;
-    /**
-     * 闪光灯开启状态
-     */
     private boolean mFlashing = true;
-    private Vibrator vibrator;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,13 +99,12 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             setResult(Activity.RESULT_CANCELED);
             finish();
         }
+
         //界面控件初始化
         initDecode();
         initView();
         //扫描动画初始化
         initScannerAnimation();
-        //初始化 CameraManager
-        CameraManager.init(this);
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
     }
@@ -146,12 +140,12 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     protected void onPause() {
         super.onPause();
-        if (handler != null) {
-            handler.quitSynchronously();
-            handler.removeCallbacksAndMessages(null);
-            handler = null;
-        }
-        CameraManager.get().closeDriver();
+        autoFocusDisposable.dispose();
+        autoFocusDisposable = null;
+        previewDisposable.dispose();
+        previewDisposable = null;
+        cameraManager.stopPreview();
+        cameraManager.closeDriver();
     }
     @Override
     protected void onDestroy() {
@@ -169,7 +163,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
                 // 使用ContentProvider通过URI获取原始图片
                 Bitmap photo = MediaStore.Images.Media.getBitmap(resolver, originalUri);
                 // 开始对图像资源解码
-                Result rawResult = DecodeManager.decodeFromPhoto(photo);
+                Result rawResult = DecodeImage.decodeFromPhoto(photo);
                 if (rawResult != null) {
                     Intent intent = new Intent();
                     intent.putExtra(SCAN_RESULT,rawResult.getText());
@@ -183,14 +177,11 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
-
     @Override
     public void onBackPressed() {
-        Toast.makeText(this, "取消扫描二维码!!!", Toast.LENGTH_SHORT).show();
         setResult(Activity.RESULT_CANCELED);
         finish();
     }
-
     @Override
     public void onClick(View v) {
         int viewId = v.getId();
@@ -256,8 +247,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
     }
     private void initCamera(SurfaceHolder surfaceHolder) {
         try {
-            CameraManager.get().openDriver(surfaceHolder);
-            Point point = CameraManager.get().getCameraResolution();
+            cameraManager = new CameraManager(this);
+            cameraManager.openDriver(surfaceHolder);
+            Point point = cameraManager.getCameraResolution();
             AtomicInteger width = new AtomicInteger(point.y);
             AtomicInteger height = new AtomicInteger(point.x);
             int cropWidth = mCropLayout.getWidth() * width.get() / mContainer.getWidth();
@@ -265,11 +257,62 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             setCropWidth(cropWidth);
             setCropHeight(cropHeight);
         } catch (IOException | RuntimeException ioe) {
+            Toast.makeText(this, "Open Camera Fail!!!", Toast.LENGTH_SHORT).show();
+            onBackPressed();
             return;
         }
-        if (handler == null) {
-            handler = new CaptureActivityHandler();
-        }
+
+        // 开始预览
+        cameraManager.startPreview();
+        autoFocusDisposable = Observable.interval(1500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        cameraManager.requestAutoFocus(new Camera.AutoFocusCallback() {
+                            @Override
+                            public void onAutoFocus(boolean success, Camera camera) {
+                                Log.d(TAG, "AutoFocus: " + success);
+                            }
+                        });
+                    }
+                });
+
+        previewDisposable = Observable.create(new ObservableOnSubscribe<byte[]>() {
+            @Override
+            public void subscribe(final ObservableEmitter<byte[]> emitter) throws Exception {
+                cameraManager.requestPreviewFrame(new Camera.PreviewCallback() {
+                    @Override
+                    public void onPreviewFrame(byte[] data, Camera camera) {
+                        emitter.onNext(data);
+                    }
+                });
+            }
+        }).subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.newThread())
+                .map(new Function<byte[], Result>() {
+                    @Override
+                    public Result apply(byte[] bytes) throws Exception {
+                        return decode(bytes, cameraManager.getCameraResolution().x, cameraManager.getCameraResolution().y);
+                    }
+                })
+                .retryWhen(new Function<Observable<Throwable>, ObservableSource<?>>() {
+                    @Override
+                    public ObservableSource<?> apply(Observable<Throwable> throwableObservable) throws Exception {
+                        return throwableObservable.flatMap(new Function<Throwable, ObservableSource<?>>() {
+                            @Override
+                            public ObservableSource<?> apply(Throwable throwable) throws Exception {
+                                return Observable.timer(200, TimeUnit.MILLISECONDS);
+                            }
+                        });
+                    }
+                })
+                .subscribe(new Consumer<Result>() {
+                    @Override
+                    public void accept(Result result) throws Exception {
+                        handleDecode(result);
+                    }
+                });
     }
     public void setCropWidth(int cropWidth) {
         CameraManager.FRAME_WIDTH = cropWidth;
@@ -281,145 +324,22 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         if (mFlashing) {
             mFlashing = false;
             // 开闪光灯
-            CameraManager.get().openLight();
+            cameraManager.openLight();
         } else {
             mFlashing = true;
             // 关闪光灯
-            CameraManager.get().offLight();
+            cameraManager.offLight();
         }
-
     }
     public void handleDecode(Result result) {
         inactivityTimer.onActivity();
-        playBeep(this, true);
         Intent intent = new Intent();
         intent.putExtra(SCAN_RESULT,result.getText());
         setResult(RESULT_OK,intent);
         finish();
     }
-    public void playBeep(Activity mContext, boolean vibrate) {
-        boolean playBeep = true;
-        AudioManager audioService = (AudioManager) mContext.getSystemService(AUDIO_SERVICE);
-        if (audioService.getRingerMode() != AudioManager.RINGER_MODE_NORMAL) {
-            playBeep = false;
-        }
-        if (playBeep && mediaPlayer != null) {
-            mediaPlayer.start();
-        } else {
-            mContext.setVolumeControlStream(AudioManager.STREAM_MUSIC);
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    mediaPlayer.seekTo(0);
-                }
-            });
-
-            AssetFileDescriptor file = mContext.getResources().openRawResourceFd(R.raw.beep);
-            try {
-                mediaPlayer.setDataSource(file.getFileDescriptor(), file.getStartOffset(), file.getLength());
-                file.close();
-                mediaPlayer.setVolume(BEEP_VOLUME, BEEP_VOLUME);
-                mediaPlayer.prepare();
-            } catch (IOException e) {
-                mediaPlayer = null;
-            }
-        }
-        if (vibrate) {
-            if(vibrator == null){
-                vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            }
-            vibrator.vibrate(VIBRATE_DURATION);
-        }
-    }
-
-    @SuppressLint("HandlerLeak")
-    final class CaptureActivityHandler extends Handler {
-        DecodeThread decodeThread = null;
-        private State state;
-        CaptureActivityHandler() {
-            decodeThread = new DecodeThread();
-            decodeThread.start();
-            state = State.SUCCESS;
-            CameraManager.get().startPreview();
-            restartPreviewAndDecode();
-        }
-        @Override
-        public void handleMessage(Message message) {
-            if (message.what == R.id.auto_focus) {
-                if (state == State.PREVIEW) {
-                    CameraManager.get().requestAutoFocus(this, R.id.auto_focus);
-                }
-            } else if (message.what == R.id.restart_preview) {
-                restartPreviewAndDecode();
-            } else if (message.what == R.id.decode_succeeded) {
-                state = State.SUCCESS;
-                handleDecode((Result) message.obj);// 解析成功，回调
-            } else if (message.what == R.id.decode_failed) {
-                state = State.PREVIEW;
-                CameraManager.get().requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
-            }
-        }
-        void quitSynchronously() {
-            state = State.DONE;
-            decodeThread.interrupt();
-            CameraManager.get().stopPreview();
-            removeMessages(R.id.decode_succeeded);
-            removeMessages(R.id.decode_failed);
-            removeMessages(R.id.decode);
-            removeMessages(R.id.auto_focus);
-        }
-        private void restartPreviewAndDecode() {
-            if (state == State.SUCCESS) {
-                state = State.PREVIEW;
-                CameraManager.get().requestPreviewFrame(decodeThread.getHandler(), R.id.decode);
-                CameraManager.get().requestAutoFocus(this, R.id.auto_focus);
-            }
-        }
-    }
-
-    final class DecodeThread extends Thread {
-        private final CountDownLatch handlerInitLatch;
-        private Handler handler;
-
-        DecodeThread() {
-            handlerInitLatch = new CountDownLatch(1);
-        }
-        Handler getHandler() {
-            try {
-                handlerInitLatch.await();
-            } catch (InterruptedException ie) {
-                // continue?
-            }
-            return handler;
-        }
-        @Override
-        public void run() {
-            Looper.prepare();
-            handler = new DecodeHandler();
-            handlerInitLatch.countDown();
-            Looper.loop();
-        }
-    }
-
-    final class DecodeHandler extends Handler {
-        DecodeHandler() {
-        }
-
-        @Override
-        public void handleMessage(Message message) {
-            if (message.what == R.id.decode) {
-                decode((byte[]) message.obj, message.arg1, message.arg2);
-            } else if (message.what == R.id.quit) {
-                Looper.myLooper().quit();
-            }
-        }
-    }
-
     private MultiFormatReader multiFormatReader;
-    private void decode(byte[] data, int width, int height) {
-        long start = System.currentTimeMillis();
+    private Result decode(byte[] data, int width, int height) {
         Result rawResult = null;
 
         //modify here
@@ -434,7 +354,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         width = height;
         height = tmp;
 
-        PlanarYUVLuminanceSource source = CameraManager.get().buildLuminanceSource(rotatedData, width, height);
+        PlanarYUVLuminanceSource source = cameraManager.buildLuminanceSource(rotatedData, width, height);
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
         try {
             rawResult = multiFormatReader.decodeWithState(bitmap);
@@ -444,27 +364,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             multiFormatReader.reset();
         }
 
-        if (rawResult != null) {
-            long end = System.currentTimeMillis();
-            Log.d(TAG, "Found barcode (" + (end - start) + " ms):\n" + rawResult.toString());
-            Message message = Message.obtain(handler, R.id.decode_succeeded, rawResult);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("barcode_bitmap", source.renderCroppedGreyscaleBitmap());
-            message.setData(bundle);
-            //Log.d(TAG, "Sending decode succeeded message...");
-            message.sendToTarget();
-        } else {
-            Message message = Message.obtain(handler, R.id.decode_failed);
-            message.sendToTarget();
-        }
-    }
-
-    private enum State {
-        //预览
-        PREVIEW,
-        //成功
-        SUCCESS,
-        //完成
-        DONE
+        return rawResult;
     }
 }

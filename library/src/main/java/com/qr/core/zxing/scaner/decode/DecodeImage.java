@@ -24,7 +24,7 @@ import java.util.Vector;
  * @date 2017/10/11
  */
 
-public class DecodeManager {
+public class DecodeImage {
 
     /**
      * 解析图片中的 二维码 或者 条形码

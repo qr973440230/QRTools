@@ -42,7 +42,6 @@ public final class CameraManager {
     public static int FRAME_WIDTH = -1;
     public static int FRAME_HEIGHT = -1;
     public static int FRAME_MARGINTOP = -1;
-    private static CameraManager cameraManager;
 
     static {
         int sdkInt;
@@ -58,23 +57,13 @@ public final class CameraManager {
     private final Context context;
     private final CameraConfigurationManager configManager;
     private final boolean useOneShotPreviewCallback;
-    /**
-     * Preview frames are delivered here, which we pass on to the registered handler. Make sure to
-     * clear the handler so it will only receive one message.
-     */
-    private final PreviewCallback previewCallback;
-    /**
-     * Autofocus callbacks arrive here, and are dispatched to the Handler which requested them.
-     */
-    private final AutoFocusCallback autoFocusCallback;
     private Camera camera;
     private Rect framingRectInPreview;
     private boolean initialized;
     private boolean previewing;
     private Camera.Parameters parameter;
 
-    private CameraManager(Context context) {
-
+    public CameraManager(Context context) {
         this.context = context;
         this.configManager = new CameraConfigurationManager(context);
 
@@ -84,29 +73,6 @@ public final class CameraManager {
         // to run out of memory. We can't use SDK_INT because it was introduced in the Donut SDK.
         //useOneShotPreviewCallback = Integer.parseInt(Build.VERSION.SDK) > Build.VERSION_CODES.CUPCAKE;
         useOneShotPreviewCallback = Integer.parseInt(Build.VERSION.SDK) > 3; // 3 = Cupcake
-
-        previewCallback = new PreviewCallback(configManager, useOneShotPreviewCallback);
-        autoFocusCallback = new AutoFocusCallback();
-    }
-
-    /**
-     * Initializes this static object with the Context of the calling Activity.
-     *
-     * @param context The Activity which wants to use the camera.
-     */
-    public static void init(Context context) {
-        if (cameraManager == null) {
-            cameraManager = new CameraManager(context);
-        }
-    }
-
-    /**
-     * Gets the CameraManager singleton instance.
-     *
-     * @return A reference to the CameraManager singleton.
-     */
-    public static CameraManager get() {
-        return cameraManager;
     }
 
     /**
@@ -162,8 +128,6 @@ public final class CameraManager {
                 camera.setPreviewCallback(null);
             }
             camera.stopPreview();
-            previewCallback.setHandler(null, 0);
-            autoFocusCallback.setHandler(null, 0);
             previewing = false;
         }
     }
@@ -173,12 +137,9 @@ public final class CameraManager {
      * in the message.obj field, with width and height encoded as message.arg1 and message.arg2,
      * respectively.
      *
-     * @param handler The handler to send the message to.
-     * @param message The what field of the message to be sent.
      */
-    public void requestPreviewFrame(Handler handler, int message) {
+    public void requestPreviewFrame(Camera.PreviewCallback previewCallback) {
         if (camera != null && previewing) {
-            previewCallback.setHandler(handler, message);
             if (useOneShotPreviewCallback) {
                 camera.setOneShotPreviewCallback(previewCallback);
             } else {
@@ -189,14 +150,9 @@ public final class CameraManager {
 
     /**
      * Asks the camera hardware to perform an autofocus.
-     *
-     * @param handler The Handler to notify when the autofocus completes.
-     * @param message The message to deliver.
      */
-    public void requestAutoFocus(Handler handler, int message) {
+    public void requestAutoFocus(Camera.AutoFocusCallback autoFocusCallback) {
         if (camera != null && previewing) {
-            autoFocusCallback.setHandler(handler, message);
-            //Log.d(TAG, "Requesting auto-focus callback");
             camera.autoFocus(autoFocusCallback);
         }
     }
@@ -301,14 +257,6 @@ public final class CameraManager {
 
     public boolean isUseOneShotPreviewCallback() {
         return useOneShotPreviewCallback;
-    }
-
-    public PreviewCallback getPreviewCallback() {
-        return previewCallback;
-    }
-
-    public AutoFocusCallback getAutoFocusCallback() {
-        return autoFocusCallback;
     }
 
     public Point getCameraResolution() {
