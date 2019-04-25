@@ -3,18 +3,13 @@ package com.qr.core.zxing;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.hardware.Camera;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -65,11 +60,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class CaptureActivity extends AppCompatActivity implements View.OnClickListener {
     public static final String TAG = CaptureActivity.class.getName();
-    public static final int GET_IMAGE_FROM_PHONE = 5002;
-    public static final float BEEP_VOLUME = 0.50f;
-    public static final int VIBRATE_DURATION = 200;
     public static final String SCAN_RESULT = CaptureActivity.class.getName() + "_DATA";
-
+    public static final int GET_IMAGE_FROM_PHONE = 5002;
 
     private CameraManager cameraManager;
     private Disposable autoFocusDisposable;
@@ -91,14 +83,9 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         //检查权限
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             Toast.makeText(this, "无相机控制权限!!!", Toast.LENGTH_SHORT).show();
-            setResult(Activity.RESULT_CANCELED);
-            finish();
+            onBackPressed();
         }
-        if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(this, "无读写外部存储权限!!!", Toast.LENGTH_SHORT).show();
-            setResult(Activity.RESULT_CANCELED);
-            finish();
-        }
+
 
         //界面控件初始化
         initDecode();
@@ -146,6 +133,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         previewDisposable = null;
         cameraManager.stopPreview();
         cameraManager.closeDriver();
+        cameraManager = null;
     }
     @Override
     protected void onDestroy() {
@@ -190,6 +178,10 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
         } else if (viewId == R.id.top_back) {
             onBackPressed();
         } else if (viewId == R.id.top_openpicture) {
+            if(ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this, "无读写外部存储权限!!!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -257,7 +249,7 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             setCropWidth(cropWidth);
             setCropHeight(cropHeight);
         } catch (IOException | RuntimeException ioe) {
-            Toast.makeText(this, "Open Camera Fail!!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "打开相机失败!!!", Toast.LENGTH_SHORT).show();
             onBackPressed();
             return;
         }
