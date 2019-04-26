@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">library</string>
-    <string name="_ok">确定</string>
-    <string name="_cancel">取消</string>
+    <string name="_popup_ok">确定</string>
+    <string name="_popup_cancel">取消</string>
 </resources>

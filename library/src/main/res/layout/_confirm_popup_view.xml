@@ -48,9 +48,9 @@
             android:paddingRight="16dp"
             android:paddingEnd="16dp"
             android:layout_marginRight="16dp"
-            android:textColor="@color/_colorPrimary"
+            android:textColor="@color/_zxing_colorPrimary"
             android:textSize="16sp"
-            android:text="@string/_cancel"
+            android:text="@string/_popup_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <androidx.appcompat.widget.AppCompatTextView
@@ -61,9 +61,9 @@
             android:paddingRight="16dp"
             android:paddingEnd="16dp"
             android:layout_marginRight="16dp"
-            android:textColor="@color/_colorPrimary"
+            android:textColor="@color/_zxing_colorPrimary"
             android:textSize="16sp"
-            android:text="@string/_ok"
+            android:text="@string/_popup_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

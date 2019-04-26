@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_above="@id/capture_crop_layout"
-        android:background="@drawable/scan_mask">
+        android:background="@drawable/_zxing_scan_mask">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/top_mask"
@@ -25,7 +25,7 @@
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
             android:alpha="0.5"
-            android:src="@drawable/s_light"/>
+            android:src="@drawable/_zxing_light"/>
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/top_openpicture"
@@ -35,7 +35,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="40dp"
             android:alpha="0.5"
-            android:src="@drawable/s_img"
+            android:src="@drawable/_img"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="40dp" />
 
@@ -47,7 +47,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="40dp"
             android:alpha="0.5"
-            android:src="@drawable/s_left_jiantou"
+            android:src="@drawable/_zxing_left_jiantou"
             android:layout_alignParentStart="true"
             android:layout_marginStart="40dp" />
     </RelativeLayout>
@@ -56,7 +56,7 @@
         android:layout_width="240dp"
         android:layout_height="240dp"
         android:layout_centerInParent="true"
-        android:background="@drawable/capture"
+        android:background="@drawable/_zxing_capture"
         android:contentDescription="@string/app_name">
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -65,7 +65,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
             android:layout_margin="5dp"
-            android:background="@drawable/kakalib_scan_ray"
+            android:background="@drawable/_zxing_kakalib_scan_ray"
             android:contentDescription="@string/app_name"/>
     </RelativeLayout>
 
@@ -75,7 +75,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_below="@id/capture_crop_layout"
-        android:background="@drawable/scan_mask"
+        android:background="@drawable/_zxing_scan_mask"
         android:contentDescription="@string/app_name"/>
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -86,7 +86,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/rl_title"
         android:layout_toLeftOf="@id/capture_crop_layout"
-        android:background="@drawable/scan_mask"
+        android:background="@drawable/_zxing_scan_mask"
         android:contentDescription="@string/app_name"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@id/capture_crop_layout" />
@@ -99,7 +99,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/rl_title"
         android:layout_toRightOf="@id/capture_crop_layout"
-        android:background="@drawable/scan_mask"
+        android:background="@drawable/_zxing_scan_mask"
         android:contentDescription="@string/app_name"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@id/capture_crop_layout" />
@@ -133,10 +133,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_weight="1"
-            android:drawableTop="@drawable/code_icon"
+            android:drawableTop="@drawable/_zxing_code_icon"
             android:gravity="center"
             android:padding="10dp"
-            android:src="@drawable/code_icon"
+            android:src="@drawable/_zxing_code_icon"
             android:text="二维码"
             android:textColor="#DBD5D5"
             android:layout_marginStart="30dp" />
@@ -146,9 +146,9 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="30dp"
             android:layout_weight="1"
-            android:drawableTop="@drawable/linecode_icon"
+            android:drawableTop="@drawable/_zxing_linecode_icon"
             android:gravity="center"
-            android:src="@drawable/linecode_icon"
+            android:src="@drawable/_zxing_linecode_icon"
             android:text="条形码"
             android:textColor="#DBD5D5"
             android:layout_marginEnd="30dp" />
