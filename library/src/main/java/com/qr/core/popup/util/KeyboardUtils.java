@@ -15,7 +15,6 @@ import android.widget.FrameLayout;
  * Create by dance, at 2018/12/17
  */
 public final class KeyboardUtils {
-
     private static int sDecorViewInvisibleHeightPre;
     private static ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener;
     private static OnSoftInputChangedListener onSoftInputChangedListener;

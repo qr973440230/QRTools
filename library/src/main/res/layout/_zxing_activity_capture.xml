@@ -35,7 +35,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="40dp"
             android:alpha="0.5"
-            android:src="@drawable/_img"
+            android:src="@drawable/_zxing_img"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="40dp" />
 
@@ -57,7 +57,7 @@
         android:layout_height="240dp"
         android:layout_centerInParent="true"
         android:background="@drawable/_zxing_capture"
-        android:contentDescription="@string/app_name">
+        android:contentDescription="@string/_qr_tools">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/capture_scan_line"
@@ -66,7 +66,7 @@
             android:layout_alignParentTop="true"
             android:layout_margin="5dp"
             android:background="@drawable/_zxing_kakalib_scan_ray"
-            android:contentDescription="@string/app_name"/>
+            android:contentDescription="@string/_qr_tools"/>
     </RelativeLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -76,7 +76,7 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@id/capture_crop_layout"
         android:background="@drawable/_zxing_scan_mask"
-        android:contentDescription="@string/app_name"/>
+        android:contentDescription="@string/_qr_tools"/>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/left_mask"
@@ -87,7 +87,7 @@
         android:layout_below="@id/rl_title"
         android:layout_toLeftOf="@id/capture_crop_layout"
         android:background="@drawable/_zxing_scan_mask"
-        android:contentDescription="@string/app_name"
+        android:contentDescription="@string/_qr_tools"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@id/capture_crop_layout" />
 
@@ -100,7 +100,7 @@
         android:layout_below="@id/rl_title"
         android:layout_toRightOf="@id/capture_crop_layout"
         android:background="@drawable/_zxing_scan_mask"
-        android:contentDescription="@string/app_name"
+        android:contentDescription="@string/_qr_tools"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@id/capture_crop_layout" />
 
