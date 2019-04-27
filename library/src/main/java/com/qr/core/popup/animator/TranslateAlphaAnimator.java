@@ -4,9 +4,6 @@ import android.view.View;
 
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
-import static com.qr.core.popup.util.PopupUtils.getWindowHeight;
-import static com.qr.core.popup.util.PopupUtils.getWindowWidth;
-
 
 /**
  * Description: 平移动画
@@ -33,20 +30,18 @@ public class TranslateAlphaAnimator extends PopupAnimator {
     }
 
     private void applyTranslation() {
-        int halfWidthOffset = getWindowWidth(targetView.getContext())/2 - targetView.getMeasuredWidth()/2;
-        int halfHeightOffset = getWindowHeight(targetView.getContext())/2 - targetView.getMeasuredHeight()/2;
         switch (popupAnimation){
             case TranslateAlphaFromLeft:
-                targetView.setTranslationX(-(targetView.getMeasuredWidth()/* + halfWidthOffset*/));
+                targetView.setTranslationX(-(targetView.getMeasuredWidth()));
                 break;
             case TranslateAlphaFromTop:
-                targetView.setTranslationY(-(targetView.getMeasuredHeight() /*+ halfHeightOffset*/));
+                targetView.setTranslationY(-(targetView.getMeasuredHeight()));
                 break;
             case TranslateAlphaFromRight:
-                targetView.setTranslationX(targetView.getMeasuredWidth() /*+ halfWidthOffset*/);
+                targetView.setTranslationX(targetView.getMeasuredWidth());
                 break;
             case TranslateAlphaFromBottom:
-                targetView.setTranslationY(targetView.getMeasuredHeight() /*+ halfHeightOffset*/);
+                targetView.setTranslationY(targetView.getMeasuredHeight());
                 break;
         }
     }

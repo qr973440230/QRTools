@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.qr.core.R;
@@ -11,30 +12,31 @@ import com.qr.core.popup.animator.PopupAnimator;
 import com.qr.core.popup.base.CenterPopupView;
 
 
-public class ConfirmPopupView extends CenterPopupView implements View.OnClickListener {
+public class InputConfirmPopupView extends CenterPopupView implements View.OnClickListener {
     private String title;
-    private String content;
+    private String hint;
     private OnCancelListener cancelListener;
     private OnConfirmListener confirmListener;
     private boolean isConfirm = false;
+    private AppCompatEditText contentEd;
 
-    public ConfirmPopupView(@NonNull Context context,String title,String content,OnCancelListener cancelListener,OnConfirmListener confirmListener) {
+    public InputConfirmPopupView(@NonNull Context context, String title, String hint, OnCancelListener cancelListener, OnConfirmListener confirmListener) {
         super(context);
         this.title = title;
-        this.content = content;
+        this.hint = hint;
         this.cancelListener = cancelListener;
         this.confirmListener = confirmListener;
     }
 
     @Override
     protected void onCreate() {
-        AppCompatTextView titleTv = findViewById(R.id._confirm_popup_view_title_tv);
-        AppCompatTextView contentTv = findViewById(R.id._confirm_popup_view_content_tv);
-        AppCompatTextView cancelTv = findViewById(R.id._confirm_popup_view_cancel_tv);
-        AppCompatTextView okTv = findViewById(R.id._confirm_popup_view_ok_tv);
+        AppCompatTextView titleTv = findViewById(R.id.__input_confirm_popup_view_title_tv);
+        contentEd = findViewById(R.id._input_confirm_popup_view_content_ed);
+        AppCompatTextView cancelTv = findViewById(R.id._input_confirm_popup_view_cancel_tv);
+        AppCompatTextView okTv = findViewById(R.id._input_confirm_popup_view_ok_tv);
 
         titleTv.setText(title);
-        contentTv.setText(content);
+        contentEd.setHint(hint);
         cancelTv.setOnClickListener(this);
         okTv.setOnClickListener(this);
     }
@@ -46,7 +48,7 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
     @Override
     protected void onDismiss() {
         if(isConfirm){
-            confirmListener.onConfirm();
+            confirmListener.onConfirm(contentEd.getText());
         }
         else{
             cancelListener.onCancel();
@@ -55,12 +57,12 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
 
     @Override
     protected int getImplLayoutId() {
-        return R.layout._confirm_popup_view;
+        return R.layout._input_confirm_popup_view;
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id._confirm_popup_view_ok_tv){
+        if(v.getId() == R.id._input_confirm_popup_view_ok_tv){
             isConfirm = true;
         }
         dismiss();
@@ -69,7 +71,7 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
     public static class Builder{
         Context context;
         private String title;
-        private String content;
+        private String hint;
         private OnCancelListener cancelListener;
         private OnConfirmListener confirmListener;
         private PopupAnimator animator;
@@ -86,8 +88,8 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
             this.title = title;
             return this;
         }
-        public Builder content(String content){
-            this.content = content;
+        public Builder hint(String hint){
+            this.hint = hint;
             return this;
         }
         public Builder cancel(OnCancelListener listener){
@@ -119,8 +121,8 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
             isAutoOpenSoftInput = autoOpenSoftInput;
         }
 
-        public ConfirmPopupView build(){
-            ConfirmPopupView confirmPopupView = new ConfirmPopupView(context, title, content, cancelListener, confirmListener);
+        public InputConfirmPopupView build(){
+            InputConfirmPopupView confirmPopupView = new InputConfirmPopupView(context, title, hint, cancelListener, confirmListener);
             confirmPopupView.setPopupAnimator(animator);
             confirmPopupView.setShadowBackground(isShadowBackground);
             confirmPopupView.setAutoOpenSoftInput(isAutoOpenSoftInput);
@@ -129,7 +131,6 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
             confirmPopupView.setRequestFocus(isRequestFocus);
             return confirmPopupView;
         }
-
     }
 
     public interface OnCancelListener {
@@ -137,6 +138,6 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
     }
 
     public interface OnConfirmListener {
-        void onConfirm();
+        void onConfirm(CharSequence string);
     }
 }

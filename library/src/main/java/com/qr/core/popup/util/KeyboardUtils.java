@@ -27,7 +27,6 @@ public final class KeyboardUtils {
 
     private static int getDecorViewInvisibleHeight(final Activity activity) {
         final View decorView = activity.getWindow().getDecorView();
-        if (decorView == null) return sDecorViewInvisibleHeightPre;
         final Rect outRect = new Rect();
         decorView.getWindowVisibleDisplayFrame(outRect);
         int delta = Math.abs(decorView.getBottom() - outRect.bottom);

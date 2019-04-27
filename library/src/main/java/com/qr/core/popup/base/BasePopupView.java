@@ -20,6 +20,7 @@ import com.qr.core.popup.animator.ShadowBgAnimator;
 import com.qr.core.popup.util.KeyboardUtils;
 import com.qr.core.popup.util.PopupUtils;
 
+import java.security.Key;
 import java.util.ArrayList;
 
 public abstract class BasePopupView extends FrameLayout {
@@ -46,6 +47,17 @@ public abstract class BasePopupView extends FrameLayout {
     public void show(){
         final Activity activity = (Activity)getContext();
         final ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
+
+        KeyboardUtils.registerSoftInputChangedListener(activity, new KeyboardUtils.OnSoftInputChangedListener() {
+            @Override
+            public void onSoftInputChanged(int height) {
+                if(height == 0){
+                    PopupUtils.moveDown(BasePopupView.this);
+                }else{
+                    PopupUtils.moveUpToKeyboard(height,BasePopupView.this);
+                }
+            }
+        });
 
         // DecorView完成布局 将PopupView添加到DecorView
         viewGroup.post(new Runnable() {
@@ -189,11 +201,15 @@ public abstract class BasePopupView extends FrameLayout {
             final Activity activity = (Activity)getContext();
             final ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
             viewGroup.removeView(BasePopupView.this);
+            KeyboardUtils.removeLayoutChangeListener(viewGroup);
         }
     };
 
     public View getPopupContentView(){
         return getChildAt(0);
+    }
+    public View getPopupImplView() {
+        return ((ViewGroup) getPopupContentView()).getChildAt(0);
     }
 
     public void setPopupAnimator(PopupAnimator popupAnimator) {
