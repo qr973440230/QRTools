@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="_BaseQuickAdapter_viewholder_support" type="id"/>
+    <item name="_BaseQuickAdapter_swiping_support" type="id"/>
+    <item name="_BaseQuickAdapter_dragging_support" type="id"/>
+    <item name="_BaseQuickAdapter_databinding_support" type="id"/>
+</resources>
