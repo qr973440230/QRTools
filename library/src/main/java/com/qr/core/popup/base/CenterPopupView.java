@@ -35,7 +35,4 @@ public abstract class CenterPopupView extends BasePopupView {
     protected PopupAnimator getDefaultPopupAnimator() {
         return new ScaleAlphaAnimator(getPopupContentView(), ScaleAlphaFromCenter);
     }
-
-    @LayoutRes
-    protected abstract int getImplLayoutId();
 }

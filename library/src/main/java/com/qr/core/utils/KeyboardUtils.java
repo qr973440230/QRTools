@@ -1,4 +1,4 @@
-package com.qr.core.popup.util;
+package com.qr.core.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.FrameLayout;
 
+import static com.qr.core.utils.WindowUtils.getDecorViewInvisibleHeight;
+
 /**
  * Description:
  * Create by dance, at 2018/12/17
@@ -20,21 +22,6 @@ public final class KeyboardUtils {
     private static OnSoftInputChangedListener onSoftInputChangedListener;
 
     private KeyboardUtils() {
-        throw new UnsupportedOperationException("u can't instantiate me...");
-    }
-
-    private static int sDecorViewDelta = 0;
-
-    private static int getDecorViewInvisibleHeight(final Activity activity) {
-        final View decorView = activity.getWindow().getDecorView();
-        final Rect outRect = new Rect();
-        decorView.getWindowVisibleDisplayFrame(outRect);
-        int delta = Math.abs(decorView.getBottom() - outRect.bottom);
-        if (delta <= getNavBarHeight()) {
-            sDecorViewDelta = delta;
-            return 0;
-        }
-        return delta - sDecorViewDelta;
     }
 
     /**
@@ -72,16 +59,6 @@ public final class KeyboardUtils {
         contentView.getViewTreeObserver().removeGlobalOnLayoutListener(onGlobalLayoutListener);
         onGlobalLayoutListener = null;
         onSoftInputChangedListener = null;
-    }
-
-    private static int getNavBarHeight() {
-        Resources res = Resources.getSystem();
-        int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId != 0) {
-            return res.getDimensionPixelSize(resourceId);
-        } else {
-            return 0;
-        }
     }
 
     public static void showSoftInput(View view) {

@@ -62,6 +62,20 @@ public class WindowUtils {
         return rect.bottom;
     }
 
+    private static int sDecorViewDelta = 0;
+    public static int getDecorViewInvisibleHeight(Activity activity){
+        int visibleHeight = getDecorViewVisibleHeight(activity);
+        int decorViewHeight = getDecorViewHeight(activity);
+        int delta = Math.abs(decorViewHeight - visibleHeight);
+        if(delta <= getNavBarHeight(activity)){
+            // 小于等于导航栏的高度 这个就是状态栏的高度
+            sDecorViewDelta = delta;
+            return 0;
+        }
+
+        return delta - sDecorViewDelta;
+    }
+
     /**
      * 获取根节点View的高度
      * Dialog 不要使用

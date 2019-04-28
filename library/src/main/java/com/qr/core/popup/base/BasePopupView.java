@@ -17,10 +17,9 @@ import androidx.annotation.NonNull;
 
 import com.qr.core.popup.animator.PopupAnimator;
 import com.qr.core.popup.animator.ShadowBgAnimator;
-import com.qr.core.popup.util.KeyboardUtils;
+import com.qr.core.utils.KeyboardUtils;
 import com.qr.core.popup.util.PopupUtils;
 
-import java.security.Key;
 import java.util.ArrayList;
 
 public abstract class BasePopupView extends FrameLayout {
@@ -282,4 +281,6 @@ public abstract class BasePopupView extends FrameLayout {
     protected abstract PopupAnimator getDefaultPopupAnimator();
     @LayoutRes
     protected abstract int getPopupViewLayoutId();
+    @LayoutRes
+    protected abstract int getImplLayoutId();
 }

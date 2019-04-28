@@ -55,7 +55,7 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
 
     @Override
     protected int getImplLayoutId() {
-        return R.layout._confirm_popup_view;
+        return R.layout._confirm_popup_view_impl;
     }
 
     @Override
