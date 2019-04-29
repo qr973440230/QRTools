@@ -59,12 +59,12 @@ public class PopupUtils {
         }
 
         int dy = 0;
-        // 状态栏高度
-        int statusBarHeight = getStatusBarHeight(activity);
+
         // 获得ImplView的底部
         int[] locations = new int[2];
         pv.getPopupImplView().getLocationInWindow(locations);
         int implViewBottom = locations[1] + pv.getPopupImplView().getMeasuredHeight();
+
         // 当前Activity可视高度
         int visibleHeight = WindowUtils.getDecorViewVisibleHeight(activity);
 
@@ -79,6 +79,8 @@ public class PopupUtils {
 
         if(WindowUtils.isStatusBarVisible(activity)){
             // 状态栏可见
+            // 状态栏高度
+            int statusBarHeight = getStatusBarHeight(activity);
             if(focusEt != null && focusEtTop - deltaY < statusBarHeight){
                 // edit被状态栏被遮住
                 deltaY = focusEtTop - statusBarHeight;
