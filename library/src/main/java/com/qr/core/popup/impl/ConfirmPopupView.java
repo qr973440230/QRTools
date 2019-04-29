@@ -8,6 +8,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import com.qr.core.R;
 import com.qr.core.popup.base.CenterPopupView;
+import com.qr.core.popup.base.PopupViewConfig;
 
 
 public class ConfirmPopupView extends CenterPopupView implements View.OnClickListener {
@@ -17,8 +18,8 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
     private OnConfirmListener confirmListener;
     private boolean isConfirm = false;
 
-    public ConfirmPopupView(@NonNull Context context) {
-        super(context);
+    public ConfirmPopupView(@NonNull Context context, PopupViewConfig popupViewConfig) {
+        super(context,popupViewConfig);
     }
 
 

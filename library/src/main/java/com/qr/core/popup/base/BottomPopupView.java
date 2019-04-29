@@ -15,8 +15,8 @@ import com.qr.core.popup.animator.TranslateAnimator;
 import static com.qr.core.popup.animator.PopupAnimation.TranslateFromBottom;
 
 public abstract class BottomPopupView extends BasePopupView{
-    public BottomPopupView(@NonNull Context context) {
-        super(context);
+    public BottomPopupView(@NonNull Context context,PopupViewConfig popupViewConfig) {
+        super(context,popupViewConfig);
 
         FrameLayout bottomPopupView = findViewById(R.id._bottom_popup_container);
         View view = LayoutInflater.from(getContext()).inflate(getImplLayoutId(), bottomPopupView,false);

@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.qr.core.popup.base.PopupViewConfig;
 import com.qr.core.popup.impl.ConfirmPopupView;
 import com.qr.core.popup.impl.InputConfirmPopupView;
 import com.qr.core.popup.util.PopupUtils;
@@ -40,7 +41,16 @@ public class MainActivity extends AppCompatActivity {
 
 //        XPopup
         viewById.setOnClickListener(v -> {
-
+            Log.d(TAG,String.valueOf(WindowUtils.getDecorViewHeight(this)));
+            Log.d(TAG,String.valueOf(WindowUtils.getDecorViewVisibleHeight(this)));
+            Log.d(TAG,String.valueOf(WindowUtils.getDecorViewInvisibleHeight(this)));
+            Log.d(TAG,String.valueOf(WindowUtils.getWindowRealHeight(this)));
+            Log.d(TAG,String.valueOf(WindowUtils.getWindowHeight(this)));
+            Log.d(TAG,String.valueOf(WindowUtils.getStatusBarHeight(this)));
+            Log.d(TAG,String.valueOf(WindowUtils.isNavigationBarVisible(this)));
+            Log.d(TAG,String.valueOf(WindowUtils.isStatusBarVisible(this)));
+            new PopUp(this,new PopupViewConfig().setDismissOnBackPressed(false).setDismissOnTouchOutside(false))
+                    .show();
         });
     }
 

@@ -25,17 +25,12 @@ import java.util.ArrayList;
 
 public abstract class BasePopupView extends FrameLayout {
     private ShadowBgAnimator shadowBgAnimator;
-    private PopupAnimator popupAnimator;
-    private boolean isShadowBackground = true;
-    private boolean isDismissOnTouchOutside = true;
-    private boolean isRequestFocus = true;
-    private boolean isDismissOnBackPressed = true;
-    private boolean isAutoOpenSoftInput = false;
-    private boolean isAutoMoveToKeyboard = false;
+    private PopupViewConfig popupViewConfig;
 
-    public BasePopupView(@NonNull Context context) {
+    public BasePopupView(@NonNull Context context,PopupViewConfig popupViewConfig) {
         super(context);
 
+        this.popupViewConfig = popupViewConfig;
         touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         shadowBgAnimator = new ShadowBgAnimator(BasePopupView.this);
         shadowBgAnimator.initAnimator();
@@ -49,14 +44,14 @@ public abstract class BasePopupView extends FrameLayout {
         final Activity activity = (Activity)getContext();
         final ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
 
-        if(isAutoMoveToKeyboard){
+        if(popupViewConfig.isAutoMoveToKeyboard){
             KeyboardUtils.registerSoftInputChangedListener(activity, new KeyboardUtils.OnSoftInputChangedListener() {
                 @Override
                 public void onSoftInputChanged(int height) {
                     if(height == 0){
                         PopupUtils.moveDown(BasePopupView.this);
                     }else{
-                        PopupUtils.moveUpToKeyboard(height,BasePopupView.this);
+                        PopupUtils.moveUpToKeyboard(BasePopupView.this);
                     }
                 }
             });
@@ -88,9 +83,9 @@ public abstract class BasePopupView extends FrameLayout {
             @Override
             public void run() {
                 getPopupContentView().setAlpha(1.0f);
-                if(popupAnimator == null){
-                    popupAnimator = getDefaultPopupAnimator();
-                    popupAnimator.initAnimator();
+                if(popupViewConfig.popupAnimator == null){
+                    popupViewConfig.popupAnimator = getDefaultPopupAnimator();
+                    popupViewConfig.popupAnimator.initAnimator();
                 }
 
                 showAnimation();
@@ -100,18 +95,18 @@ public abstract class BasePopupView extends FrameLayout {
     }
 
     private void showAnimation(){
-        if(isShadowBackground)
+        if(popupViewConfig.isShadowBackground)
             shadowBgAnimator.animateShow();
-        popupAnimator.animateShow();
+        popupViewConfig.popupAnimator.animateShow();
     }
     private void dismissAnimation(){
-        if(isShadowBackground)
+        if(popupViewConfig.isShadowBackground)
             shadowBgAnimator.animateDismiss();
-        popupAnimator.animateDismiss();
+        popupViewConfig.popupAnimator.animateDismiss();
     }
     private void doAfterShow(){
         removeCallbacks(doAfterShowTask);
-        postDelayed(doAfterShowTask,popupAnimator.getDuration());
+        postDelayed(doAfterShowTask,popupViewConfig.popupAnimator.getDuration());
     }
     private Runnable doAfterShowTask = new Runnable() {
         @Override
@@ -126,7 +121,7 @@ public abstract class BasePopupView extends FrameLayout {
 
     private void focusAndProcessBackPress(){
         // 是否抢占焦点
-        if(isRequestFocus){
+        if(popupViewConfig.isRequestFocus){
             setFocusableInTouchMode(true);
             requestFocus();
         }
@@ -136,7 +131,7 @@ public abstract class BasePopupView extends FrameLayout {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                    if (isDismissOnBackPressed)
+                    if (popupViewConfig.isDismissOnBackPressed)
                         dismiss();
                     return true;
                 }
@@ -152,7 +147,7 @@ public abstract class BasePopupView extends FrameLayout {
                 et.setFocusable(true);
                 et.setFocusableInTouchMode(true);
                 et.requestFocus();
-                if (isAutoOpenSoftInput) {
+                if (popupViewConfig.isAutoOpenSoftInput) {
                     if(showSoftInputTask==null){
                         showSoftInputTask = new ShowSoftInputTask(et);
                     }else {
@@ -165,7 +160,7 @@ public abstract class BasePopupView extends FrameLayout {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-                        if (isDismissOnBackPressed)
+                        if (popupViewConfig.isDismissOnBackPressed)
                             dismiss();
                         return true;
                     }
@@ -193,14 +188,14 @@ public abstract class BasePopupView extends FrameLayout {
     private void doAfterDismiss(){
         KeyboardUtils.hideSoftInput(this);
         removeCallbacks(doAfterDismissTask);
-        postDelayed(doAfterDismissTask,popupAnimator.getDuration());
+        postDelayed(doAfterDismissTask,popupViewConfig.popupAnimator.getDuration());
     }
     private Runnable doAfterDismissTask = new Runnable() {
         @Override
         public void run() {
             onDismiss();
             // TODO: onDismiss
-            if(isRequestFocus){
+            if(popupViewConfig.isRequestFocus){
                 View contentView = ((Activity)getContext()).findViewById(android.R.id.content);
                 contentView.setFocusable(true);
                 contentView.setFocusableInTouchMode(true);
@@ -210,7 +205,7 @@ public abstract class BasePopupView extends FrameLayout {
             final Activity activity = (Activity)getContext();
             final ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
             viewGroup.removeView(BasePopupView.this);
-            if(isAutoMoveToKeyboard){
+            if(popupViewConfig.isAutoMoveToKeyboard){
                 KeyboardUtils.removeLayoutChangeListener(viewGroup);
             }
         }
@@ -221,28 +216,6 @@ public abstract class BasePopupView extends FrameLayout {
     }
     public View getPopupImplView() {
         return ((ViewGroup) getPopupContentView()).getChildAt(0);
-    }
-
-    public void setPopupAnimator(PopupAnimator popupAnimator) {
-        this.popupAnimator = popupAnimator;
-    }
-    public void setShadowBackground(boolean shadowBackground) {
-        this.isShadowBackground = shadowBackground;
-    }
-    public void setDismissOnTouchOutside(boolean dismissOnTouchOutside) {
-        this.isDismissOnTouchOutside = dismissOnTouchOutside;
-    }
-    public void setRequestFocus(boolean requestFocus) {
-        this.isRequestFocus = requestFocus;
-    }
-    public void setDismissOnBackPressed(boolean dismissOnBackPressed) {
-        isDismissOnBackPressed = dismissOnBackPressed;
-    }
-    public void setAutoOpenSoftInput(boolean autoOpenSoftInput) {
-        isAutoOpenSoftInput = autoOpenSoftInput;
-    }
-    public void setAutoMoveToKeyboard(boolean autoMoveToKeyboard) {
-        isAutoMoveToKeyboard = autoMoveToKeyboard;
     }
 
     @Override
@@ -275,7 +248,7 @@ public abstract class BasePopupView extends FrameLayout {
                     float dy = event.getY() - y;
                     float distance = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
                     if (distance < touchSlop && (System.currentTimeMillis() - downTime) < 350) {
-                        if(isDismissOnTouchOutside){
+                        if(popupViewConfig.isDismissOnTouchOutside){
                             dismiss();
                         }
                     }

@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import com.qr.core.R;
 import com.qr.core.popup.base.CenterPopupView;
+import com.qr.core.popup.base.PopupViewConfig;
 
 
 public class InputConfirmPopupView extends CenterPopupView implements View.OnClickListener {
@@ -19,8 +20,8 @@ public class InputConfirmPopupView extends CenterPopupView implements View.OnCli
     private boolean isConfirm = false;
     private AppCompatEditText contentEd;
 
-    public InputConfirmPopupView(@NonNull Context context) {
-        super(context);
+    public InputConfirmPopupView(@NonNull Context context, PopupViewConfig popupViewConfig) {
+        super(context,popupViewConfig);
     }
 
     @Override

@@ -16,8 +16,8 @@ import static com.qr.core.popup.animator.PopupAnimation.ScaleAlphaFromCenter;
 
 
 public abstract class CenterPopupView extends BasePopupView {
-    public CenterPopupView(@NonNull Context context) {
-        super(context);
+    public CenterPopupView(@NonNull Context context,PopupViewConfig popupViewConfig) {
+        super(context,popupViewConfig);
 
         FrameLayout centerPopupView = findViewById(R.id._center_popup_container);
         View view = LayoutInflater.from(getContext()).inflate(getImplLayoutId(), centerPopupView, false);

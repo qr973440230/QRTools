@@ -1,5 +1,6 @@
 package com.qr.core.popup.base;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,17 +21,17 @@ import static com.qr.core.popup.animator.PopupAnimation.ScaleAlphaFromCenter;
  */
 public abstract class FullScreenPopupView extends BasePopupView{
 
-    public FullScreenPopupView(@NonNull Context context,boolean showStatusBar,boolean showNavigationBar) {
-        super(context);
+    public FullScreenPopupView(@NonNull Context context,PopupViewConfig popupViewConfig) {
+        super(context,popupViewConfig);
 
         FrameLayout fullscreenPopupView = findViewById(R.id._fullscreen_popup_container);
         View view = LayoutInflater.from(context).inflate(getImplLayoutId(), fullscreenPopupView, false);
         ViewGroup.MarginLayoutParams layoutParams = (MarginLayoutParams) view.getLayoutParams();
-        if(showStatusBar){
+        if(WindowUtils.isStatusBarVisible((Activity) getContext())){
             layoutParams.topMargin = WindowUtils.getStatusBarHeight(context);
         }
-        if(showNavigationBar){
-            layoutParams.bottomMargin = WindowUtils.getNavBarHeight(context);
+        if(WindowUtils.isNavigationBarVisible((Activity) getContext())){
+            layoutParams.bottomMargin = WindowUtils.getNavigationBarHeight(context);
         }
         view.setLayoutParams(layoutParams);
         fullscreenPopupView.addView(view);

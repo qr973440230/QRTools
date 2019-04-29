@@ -36,45 +36,79 @@ public class WindowUtils {
         }
         return displayMetrics;
     }
-
-    /**
+    /***
+     * 获取StatusBar高度 这个值不会变
+     * @param context
+     * @return
+     */
+    public static int getStatusBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
+        return resources.getDimensionPixelSize(resourceId);
+    }
+    /****
+     * 获取NavigationBar高度 这个值不会变
+     * @param context
+     * @return
+     */
+    public static int getNavigationBarHeight(Context context) {
+        Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        return resources.getDimensionPixelSize(resourceId);
+    }
+    /****
      * 获取DecorView高度
-     * */
+     * @param activity
+     * @return
+     */
     public static int getDecorViewHeight(Activity activity){
         View decorView = activity.getWindow().getDecorView();
-        int measuredHeight = decorView.getMeasuredHeight();
-        if(measuredHeight <= 0){
-            throw new UnsupportedOperationException("DecorView Not Be Measured");
-        }
-        return measuredHeight;
+        return decorView.getMeasuredHeight();
     }
-
-    /**
-     * 获取未被软键盘遮住的DecorViewHeight
+    /****
+     *获取DecorView可见高度
+     * @param activity
+     * @return
      */
     public static int getDecorViewVisibleHeight(Activity activity){
         Rect rect = new Rect();
         activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
         return rect.bottom;
     }
-
+    /****
+     * 获取DecorView不可见高度
+     * @param activity
+     * @return
+     */
     public static int getDecorViewInvisibleHeight(Activity activity){
         int decorViewHeight = getDecorViewHeight(activity); // decorView 测量的高度
         int visibleHeight = getDecorViewVisibleHeight(activity);
         return Math.abs(decorViewHeight - visibleHeight);
     }
 
-    // StatusBar高度 不会变
-    public static int getStatusBarHeight(Context context) {
-        Resources resources = context.getResources();
-        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
-        return resources.getDimensionPixelSize(resourceId);
+    /****
+     * 导航栏是否可见
+     * @param activity
+     * @return
+     */
+    public static boolean isNavigationBarVisible(Activity activity){
+        int decorViewHeight = getDecorViewHeight(activity);
+        int decorViewVisibleHeight = getDecorViewVisibleHeight(activity);
+        int windowRealHeight = getWindowRealHeight(activity);
+        int navigationBarHeight = getNavigationBarHeight(activity);
+
+        return decorViewHeight < windowRealHeight ||
+                decorViewHeight - decorViewVisibleHeight == navigationBarHeight;
     }
 
-    // NavBar高度 不会变
-    public static int getNavBarHeight(Context context) {
-        Resources resources = context.getResources();
-        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
-        return resources.getDimensionPixelSize(resourceId);
+    /****
+     * 状态栏是否可见
+     * @param activity
+     * @return
+     */
+    public static boolean isStatusBarVisible(Activity activity){
+        Rect rect = new Rect();
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
+        return rect.top == getStatusBarHeight(activity);
     }
 }

@@ -59,7 +59,6 @@ public class PopupUtils {
         }
 
         int dy = 0;
-
         // 获得ImplView的底部
         int[] locations = new int[2];
         pv.getPopupImplView().getLocationInWindow(locations);
@@ -67,16 +66,13 @@ public class PopupUtils {
 
         // 当前Activity可视高度
         int visibleHeight = WindowUtils.getDecorViewVisibleHeight(activity);
-
         int deltaY = visibleHeight - implViewBottom;
         if(deltaY >= 0){
             // 窗体显示在键盘之上
             return;
         }
-
         // 窗体显示在键盘之下
         deltaY = Math.abs(deltaY);
-
         // 状态栏高度
         int statusBarHeight = getStatusBarHeight(activity);
         if(focusEt != null && focusEtTop - deltaY < statusBarHeight){
