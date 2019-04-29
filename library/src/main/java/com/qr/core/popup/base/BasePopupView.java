@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
+import com.qr.core.R;
 import com.qr.core.popup.animator.PopupAnimator;
 import com.qr.core.popup.animator.ShadowBgAnimator;
 import com.qr.core.utils.KeyboardUtils;
@@ -187,6 +188,7 @@ public abstract class BasePopupView extends FrameLayout {
     }
 
     private void doAfterDismiss(){
+        KeyboardUtils.hideSoftInput(this);
         removeCallbacks(doAfterDismissTask);
         postDelayed(doAfterDismissTask,popupAnimator.getDuration());
     }
@@ -195,6 +197,11 @@ public abstract class BasePopupView extends FrameLayout {
         public void run() {
             onDismiss();
             // TODO: onDismiss
+            if(isRequestFocus){
+                View contentView = ((Activity)getContext()).findViewById(android.R.id.content);
+                contentView.setFocusable(true);
+                contentView.setFocusableInTouchMode(true);
+            }
 
             // 移除自己
             final Activity activity = (Activity)getContext();
