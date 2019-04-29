@@ -15,12 +15,11 @@ import com.qr.core.popup.animator.TranslateAnimator;
 import static com.qr.core.popup.animator.PopupAnimation.TranslateFromBottom;
 
 public abstract class BottomPopupView extends BasePopupView{
-    protected FrameLayout bottomPopupView;
     public BottomPopupView(@NonNull Context context) {
         super(context);
 
-        bottomPopupView = findViewById(R.id._bottom_popup_container);
-        View view = LayoutInflater.from(getContext()).inflate(getImplLayoutId(),bottomPopupView,false);
+        FrameLayout bottomPopupView = findViewById(R.id._bottom_popup_container);
+        View view = LayoutInflater.from(getContext()).inflate(getImplLayoutId(), bottomPopupView,false);
         bottomPopupView.addView(view);
     }
 
@@ -31,7 +30,7 @@ public abstract class BottomPopupView extends BasePopupView{
     }
 
     @Override
-    protected int getPopupViewLayoutId() {
+    protected final int getPopupViewLayoutId() {
         return R.layout._bottom_popup_view;
     }
 }

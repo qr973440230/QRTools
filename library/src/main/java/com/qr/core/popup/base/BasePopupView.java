@@ -31,6 +31,7 @@ public abstract class BasePopupView extends FrameLayout {
     private boolean isRequestFocus = true;
     private boolean isDismissOnBackPressed = true;
     private boolean isAutoOpenSoftInput = false;
+    private boolean isAutoMoveToKeyboard = false;
 
     public BasePopupView(@NonNull Context context) {
         super(context);
@@ -48,16 +49,18 @@ public abstract class BasePopupView extends FrameLayout {
         final Activity activity = (Activity)getContext();
         final ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
 
-        KeyboardUtils.registerSoftInputChangedListener(activity, new KeyboardUtils.OnSoftInputChangedListener() {
-            @Override
-            public void onSoftInputChanged(int height) {
-                if(height == 0){
-                    PopupUtils.moveDown(BasePopupView.this);
-                }else{
-                    PopupUtils.moveUpToKeyboard(height,BasePopupView.this);
+        if(isAutoMoveToKeyboard){
+            KeyboardUtils.registerSoftInputChangedListener(activity, new KeyboardUtils.OnSoftInputChangedListener() {
+                @Override
+                public void onSoftInputChanged(int height) {
+                    if(height == 0){
+                        PopupUtils.moveDown(BasePopupView.this);
+                    }else{
+                        PopupUtils.moveUpToKeyboard(height,BasePopupView.this);
+                    }
                 }
-            }
-        });
+            });
+        }
 
         // DecorView完成布局 将PopupView添加到DecorView
         viewGroup.post(new Runnable() {
@@ -236,6 +239,10 @@ public abstract class BasePopupView extends FrameLayout {
     public void setAutoOpenSoftInput(boolean autoOpenSoftInput) {
         isAutoOpenSoftInput = autoOpenSoftInput;
     }
+    public void setAutoMoveToKeyboard(boolean autoMoveToKeyboard) {
+        isAutoMoveToKeyboard = autoMoveToKeyboard;
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -245,7 +252,6 @@ public abstract class BasePopupView extends FrameLayout {
             removeCallbacks(showSoftInputTask);
         }
     }
-
     private float x, y;
     private long downTime;
     private int touchSlop;

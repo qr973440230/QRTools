@@ -77,20 +77,11 @@ public class PopupUtils {
         // 窗体显示在键盘之下
         deltaY = Math.abs(deltaY);
 
-        if(WindowUtils.isStatusBarVisible(activity)){
-            // 状态栏可见
-            // 状态栏高度
-            int statusBarHeight = getStatusBarHeight(activity);
-            if(focusEt != null && focusEtTop - deltaY < statusBarHeight){
-                // edit被状态栏被遮住
-                deltaY = focusEtTop - statusBarHeight;
-            }
-        }else{
-            // 状态栏不可见
-            if(focusEt != null && focusEtTop - deltaY < 0){
-                // edit被屏幕顶部遮住
-                deltaY = focusEtTop;
-            }
+        // 状态栏高度
+        int statusBarHeight = getStatusBarHeight(activity);
+        if(focusEt != null && focusEtTop - deltaY < statusBarHeight){
+            // edit被状态栏被遮住
+            deltaY = focusEtTop - statusBarHeight;
         }
 
         dy = deltaY;
