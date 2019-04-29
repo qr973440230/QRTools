@@ -34,7 +34,7 @@ public class PopupUtils {
                 .setInterpolator(new OvershootInterpolator(0))
                 .setDuration(300).start();
     }
-    public static void moveUpToKeyboard(int keyboardHeight, BasePopupView pv) {
+    public static void moveUpToKeyboard(BasePopupView pv) {
         Activity activity = (Activity) pv.getContext();
         if(activity == null){
             return;
@@ -85,7 +85,6 @@ public class PopupUtils {
         }
 
         dy = deltaY;
-
         pv.getPopupContentView().animate().translationY(-dy)
                 .setDuration(250)
                 .setInterpolator(new OvershootInterpolator(0))

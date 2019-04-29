@@ -7,7 +7,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
 
 import com.qr.core.R;
-import com.qr.core.popup.animator.PopupAnimator;
 import com.qr.core.popup.base.CenterPopupView;
 
 
@@ -18,13 +17,10 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
     private OnConfirmListener confirmListener;
     private boolean isConfirm = false;
 
-    public ConfirmPopupView(@NonNull Context context,String title,String content,OnCancelListener cancelListener,OnConfirmListener confirmListener) {
+    public ConfirmPopupView(@NonNull Context context) {
         super(context);
-        this.title = title;
-        this.content = content;
-        this.cancelListener = cancelListener;
-        this.confirmListener = confirmListener;
     }
+
 
     @Override
     protected void onCreate() {
@@ -33,8 +29,13 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
         AppCompatTextView cancelTv = findViewById(R.id._confirm_popup_view_cancel_tv);
         AppCompatTextView okTv = findViewById(R.id._confirm_popup_view_ok_tv);
 
-        titleTv.setText(title);
-        contentTv.setText(content);
+        if(title != null){
+            titleTv.setText(title);
+        }
+        if(content != null){
+            contentTv.setText(content);
+        }
+
         cancelTv.setOnClickListener(this);
         okTv.setOnClickListener(this);
     }
@@ -46,10 +47,14 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
     @Override
     protected void onDismiss() {
         if(isConfirm){
-            confirmListener.onConfirm();
+            if(confirmListener != null){
+                confirmListener.onConfirm();
+            }
         }
         else{
-            cancelListener.onCancel();
+            if(cancelListener != null){
+                cancelListener.onCancel();
+            }
         }
     }
 
@@ -66,70 +71,29 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
         dismiss();
     }
 
-    public static class Builder{
-        Context context;
-        private String title;
-        private String content;
-        private OnCancelListener cancelListener;
-        private OnConfirmListener confirmListener;
-        private PopupAnimator animator;
-        private boolean isShadowBackground = true;
-        private boolean isDismissOnTouchOutside = true;
-        private boolean isRequestFocus = true;
-        private boolean isDismissOnBackPressed = true;
-        private boolean isAutoOpenSoftInput = false;
+    public ConfirmPopupView setTitle(String title) {
+        this.title = title;
+        return this;
+    }
 
-        public Builder(@NonNull Context context){
-            this.context = context;
-        }
-        public Builder title(String title){
-            this.title = title;
-            return this;
-        }
-        public Builder content(String content){
-            this.content = content;
-            return this;
-        }
-        public Builder cancel(OnCancelListener listener){
-            this.cancelListener = listener;
-            return this;
-        }
-        public Builder confirm(OnConfirmListener listener){
-            this.confirmListener = listener;
-            return this;
-        }
-        public Builder setAnimator(PopupAnimator animator) {
-            this.animator = animator;
-            return this;
-        }
-        public Builder setShadowBackground(boolean shadowBackground) {
-            this.isShadowBackground = shadowBackground;
-            return this;
-        }
-        public void setDismissOnTouchOutside(boolean dismissOnTouchOutside) {
-            isDismissOnTouchOutside = dismissOnTouchOutside;
-        }
-        public void setRequestFocus(boolean requestFocus) {
-            isRequestFocus = requestFocus;
-        }
-        public void setDismissOnBackPressed(boolean dismissOnBackPressed) {
-            isDismissOnBackPressed = dismissOnBackPressed;
-        }
-        public void setAutoOpenSoftInput(boolean autoOpenSoftInput) {
-            isAutoOpenSoftInput = autoOpenSoftInput;
-        }
+    public ConfirmPopupView setContent(String content) {
+        this.content = content;
+        return this;
+    }
 
-        public ConfirmPopupView build(){
-            ConfirmPopupView confirmPopupView = new ConfirmPopupView(context, title, content, cancelListener, confirmListener);
-            confirmPopupView.setPopupAnimator(animator);
-            confirmPopupView.setShadowBackground(isShadowBackground);
-            confirmPopupView.setAutoOpenSoftInput(isAutoOpenSoftInput);
-            confirmPopupView.setDismissOnBackPressed(isDismissOnBackPressed);
-            confirmPopupView.setDismissOnTouchOutside(isDismissOnTouchOutside);
-            confirmPopupView.setRequestFocus(isRequestFocus);
-            return confirmPopupView;
-        }
+    public ConfirmPopupView setCancelListener(OnCancelListener cancelListener) {
+        this.cancelListener = cancelListener;
+        return this;
+    }
 
+    public ConfirmPopupView setConfirmListener(OnConfirmListener confirmListener) {
+        this.confirmListener = confirmListener;
+        return this;
+    }
+
+    public ConfirmPopupView setConfirm(boolean confirm) {
+        isConfirm = confirm;
+        return this;
     }
 
     public interface OnCancelListener {

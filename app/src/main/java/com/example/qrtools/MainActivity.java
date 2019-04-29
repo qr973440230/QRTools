@@ -40,35 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        XPopup
         viewById.setOnClickListener(v -> {
-//            new ConfirmPopupView.Builder(this)
-//                    .title("Title")
-//                    .content("content")
-//                    .cancel(()->{
-//                        Toast.makeText(this, "Cancel", Toast.LENGTH_SHORT).show();
-//                    })
-//                    .confirm(()->{
-//                        Toast.makeText(this, "Confirm", Toast.LENGTH_SHORT).show();
-//                    })
-//                    .build()
-//                    .show();
-//            new InputConfirmPopupView.Builder(this)
-//                    .title("Title")
-//                    .hint("Hint")
-//                    .cancel(() -> Toast.makeText(MainActivity.this, "Cancel", Toast.LENGTH_SHORT).show())
-//                    .confirm(string -> Toast.makeText(MainActivity.this, "Ok: " + string, Toast.LENGTH_SHORT).show())
-//                    .build()
-//                    .show();
 
-            Log.d(TAG, String.valueOf(getWindow().getDecorView().getParent()));
-            Log.d(TAG, String.valueOf(WindowUtils.getDecorViewHeight(this)));
-            Log.d(TAG, String.valueOf(WindowUtils.getDecorViewInvisibleHeight(this)));
-            Log.d(TAG, String.valueOf(WindowUtils.getDecorViewVisibleHeight(this)));
-            Log.d(TAG, String.valueOf(WindowUtils.getWindowRealHeight(this)));
-            Log.d(TAG, String.valueOf(WindowUtils.getStatusBarHeight(this)));
-            Log.d(TAG, String.valueOf(WindowUtils.getNavBarHeight(this)));
-            Log.d(TAG, String.valueOf(WindowUtils.isNavigationBarVisible(this,0)));
-            Log.d(TAG, String.valueOf(WindowUtils.isStatusBarVisible(this)));
-            Log.d(TAG, String.valueOf(WindowUtils.isFullScreen(this,0)));
         });
     }
 

@@ -24,8 +24,8 @@ import com.qr.core.popup.util.PopupUtils;
 import java.util.ArrayList;
 
 public abstract class BasePopupView extends FrameLayout {
-    private PopupAnimator popupAnimator;
     private ShadowBgAnimator shadowBgAnimator;
+    private PopupAnimator popupAnimator;
     private boolean isShadowBackground = true;
     private boolean isDismissOnTouchOutside = true;
     private boolean isRequestFocus = true;
@@ -210,7 +210,9 @@ public abstract class BasePopupView extends FrameLayout {
             final Activity activity = (Activity)getContext();
             final ViewGroup viewGroup = (ViewGroup) activity.getWindow().getDecorView();
             viewGroup.removeView(BasePopupView.this);
-            KeyboardUtils.removeLayoutChangeListener(viewGroup);
+            if(isAutoMoveToKeyboard){
+                KeyboardUtils.removeLayoutChangeListener(viewGroup);
+            }
         }
     };
 
