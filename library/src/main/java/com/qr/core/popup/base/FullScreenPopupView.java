@@ -27,10 +27,11 @@ public abstract class FullScreenPopupView extends BasePopupView{
         FrameLayout fullscreenPopupView = findViewById(R.id._fullscreen_popup_container);
         View view = LayoutInflater.from(context).inflate(getImplLayoutId(), fullscreenPopupView, false);
         ViewGroup.MarginLayoutParams layoutParams = (MarginLayoutParams) view.getLayoutParams();
-        if(WindowUtils.isStatusBarVisible((Activity) getContext())){
+        if(WindowUtils.isStatusBarVisible((Activity) context)){
             layoutParams.topMargin = WindowUtils.getStatusBarHeight(context);
         }
-        if(WindowUtils.isNavigationBarVisible((Activity) getContext())){
+        if(WindowUtils.isNavigationBarVisible((Activity) context) &&
+                WindowUtils.getDecorViewHeight((Activity) context) == WindowUtils.getWindowRealHeight(context) ){
             layoutParams.bottomMargin = WindowUtils.getNavigationBarHeight(context);
         }
         view.setLayoutParams(layoutParams);

@@ -12,7 +12,7 @@ import com.qr.core.popup.base.CenterPopupView;
 import com.qr.core.popup.base.PopupViewConfig;
 
 
-public class InputConfirmPopupView extends CenterPopupView implements View.OnClickListener {
+public class InputConfirmPopupView extends CenterPopupView{
     private String title;
     private String hint;
     private OnCancelListener cancelListener;
@@ -37,8 +37,19 @@ public class InputConfirmPopupView extends CenterPopupView implements View.OnCli
         if(hint != null){
             contentEd.setHint(hint);
         }
-        cancelTv.setOnClickListener(this);
-        okTv.setOnClickListener(this);
+        cancelTv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+        okTv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isConfirm = true;
+                dismiss();
+            }
+        });
     }
 
     @Override
@@ -62,14 +73,6 @@ public class InputConfirmPopupView extends CenterPopupView implements View.OnCli
     @Override
     protected int getImplLayoutId() {
         return R.layout._input_confirm_popup_view;
-    }
-
-    @Override
-    public void onClick(View v) {
-        if(v.getId() == R.id._input_confirm_popup_view_ok_tv){
-            isConfirm = true;
-        }
-        dismiss();
     }
 
     public InputConfirmPopupView setTitle(String title) {

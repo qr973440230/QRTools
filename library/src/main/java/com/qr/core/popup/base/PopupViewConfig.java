@@ -10,6 +10,7 @@ public class PopupViewConfig {
     boolean isDismissOnBackPressed = true;
     boolean isAutoOpenSoftInput = false;
     boolean isAutoMoveToKeyboard = false;
+    OnBackPressedListener backPressedListener;
 
     public PopupViewConfig setPopupAnimator(PopupAnimator popupAnimator) {
         this.popupAnimator = popupAnimator;
@@ -44,5 +45,14 @@ public class PopupViewConfig {
     public PopupViewConfig setAutoMoveToKeyboard(boolean autoMoveToKeyboard) {
         isAutoMoveToKeyboard = autoMoveToKeyboard;
         return this;
+    }
+
+    public PopupViewConfig setBackPressedListener(OnBackPressedListener backPressedListener) {
+        this.backPressedListener = backPressedListener;
+        return this;
+    }
+
+    public interface OnBackPressedListener{
+        void onBackPressed();
     }
 }

@@ -11,7 +11,7 @@ import com.qr.core.popup.base.CenterPopupView;
 import com.qr.core.popup.base.PopupViewConfig;
 
 
-public class ConfirmPopupView extends CenterPopupView implements View.OnClickListener {
+public class ConfirmPopupView extends CenterPopupView{
     private String title;
     private String content;
     private OnCancelListener cancelListener;
@@ -37,8 +37,19 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
             contentTv.setText(content);
         }
 
-        cancelTv.setOnClickListener(this);
-        okTv.setOnClickListener(this);
+        cancelTv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
+        okTv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isConfirm = true;
+                dismiss();
+            }
+        });
     }
 
     @Override
@@ -64,14 +75,6 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
         return R.layout._confirm_popup_view_impl;
     }
 
-    @Override
-    public void onClick(View v) {
-        if(v.getId() == R.id._confirm_popup_view_ok_tv){
-            isConfirm = true;
-        }
-        dismiss();
-    }
-
     public ConfirmPopupView setTitle(String title) {
         this.title = title;
         return this;
@@ -89,11 +92,6 @@ public class ConfirmPopupView extends CenterPopupView implements View.OnClickLis
 
     public ConfirmPopupView setConfirmListener(OnConfirmListener confirmListener) {
         this.confirmListener = confirmListener;
-        return this;
-    }
-
-    public ConfirmPopupView setConfirm(boolean confirm) {
-        isConfirm = confirm;
         return this;
     }
 

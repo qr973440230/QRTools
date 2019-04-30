@@ -15,7 +15,6 @@ import android.widget.FrameLayout;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 
-import com.qr.core.R;
 import com.qr.core.popup.animator.PopupAnimator;
 import com.qr.core.popup.animator.ShadowBgAnimator;
 import com.qr.core.utils.KeyboardUtils;
@@ -131,8 +130,12 @@ public abstract class BasePopupView extends FrameLayout {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                    if (popupViewConfig.isDismissOnBackPressed)
+                    if(popupViewConfig.backPressedListener != null){
+                        popupViewConfig.backPressedListener.onBackPressed();
+                    }
+                    if (popupViewConfig.isDismissOnBackPressed){
                         dismiss();
+                    }
                     return true;
                 }
                 return false;
@@ -160,6 +163,9 @@ public abstract class BasePopupView extends FrameLayout {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+                        if(popupViewConfig.backPressedListener != null){
+                            popupViewConfig.backPressedListener.onBackPressed();
+                        }
                         if (popupViewConfig.isDismissOnBackPressed)
                             dismiss();
                         return true;

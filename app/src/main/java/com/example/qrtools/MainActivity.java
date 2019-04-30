@@ -51,6 +51,22 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG,String.valueOf(WindowUtils.isStatusBarVisible(this)));
             new PopUp(this,new PopupViewConfig().setDismissOnBackPressed(false).setDismissOnTouchOutside(false))
                     .show();
+//            new ConfirmPopupView(this,new PopupViewConfig())
+//                    .setCancelListener(new ConfirmPopupView.OnCancelListener() {
+//                        @Override
+//                        public void onCancel() {
+//
+//                        }
+//                    })
+//                    .setConfirmListener(new ConfirmPopupView.OnConfirmListener() {
+//                        @Override
+//                        public void onConfirm() {
+//
+//                        }
+//                    })
+//                    .show();
+            new InputConfirmPopupView(this,new PopupViewConfig().setAutoMoveToKeyboard(true))
+                    .show();
         });
     }
 
