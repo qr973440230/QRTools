@@ -18,7 +18,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/rx_kit_provider_paths"/>
+                android:resource="@xml/_rx_camera_provider_paths"/>
         </provider>
     </application>
 </manifest>
