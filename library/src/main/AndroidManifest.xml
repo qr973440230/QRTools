@@ -2,12 +2,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.qr.core" >
 
-    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FLASHLIGHT"/>
     <uses-permission android:name="android.permission.HARDWARE_TEST" tools:ignore="ProtectedPermissions" />
 
     <application>
         <activity android:name=".zxing.CaptureActivity" android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <provider
+            android:authorities="com.qr.core.camera.CameraFileProvider"
+            android:name="com.qr.core.camera.CameraFileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/_rx_camera_provider_paths"/>
+        </provider>
     </application>
 </manifest>
