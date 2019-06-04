@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG,String.valueOf(WindowUtils.getStatusBarHeight(this)));
             Log.d(TAG,String.valueOf(WindowUtils.isNavigationBarVisible(this)));
             Log.d(TAG,String.valueOf(WindowUtils.isStatusBarVisible(this)));
-            new PopUp(this,new PopupViewConfig().setDismissOnBackPressed(false).setDismissOnTouchOutside(false))
-                    .show();
 //            new ConfirmPopupView(this,new PopupViewConfig())
 //                    .setCancelListener(new ConfirmPopupView.OnCancelListener() {
 //                        @Override
