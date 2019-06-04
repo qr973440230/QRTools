@@ -86,7 +86,6 @@ public class CaptureActivity extends AppCompatActivity implements View.OnClickLi
             onBackPressed();
         }
 
-
         //界面控件初始化
         initDecode();
         initView();
